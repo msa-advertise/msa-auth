@@ -3,17 +3,17 @@ spring:
     name: msa-auth
 
   datasource:
-    url: jdbc:h2:mem:testdb                       # H2? ??? JDBC URL (??? ??????? ?? URL)
-    driver-class-name: org.h2.Driver              # H2 ?????? ???? ???
-    username: sa                                  # ?? ??? ??
-    password:                                     # ?? ???? (? ?)
+    url: jdbc:h2:tcp://localhost/~/testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
   jpa:
     hibernate:
-      ddl-auto: update                            # "update"? ?? ?????? ?? ? ???? ???
+      ddl-auto: update
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.H2Dialect  # H2 ??????? ??? Hibernate ?? ??
+        dialect: org.hibernate.dialect.H2Dialect
   h2:
     console:
-      enabled: true                               # H2 ? ?? ??? (localhost:8080/h2-console)
-      path: /h2-console                           # H2 ?? ?? ?? (?? ? ?? ??)
+      enabled: true
+      path: /h2-console
