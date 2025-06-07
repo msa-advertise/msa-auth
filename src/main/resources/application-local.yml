@@ -14,3 +14,11 @@ spring:
     console:
       enabled: true
       path: /h2-console
+
+cors:
+  allowed-origins: "http://localhost:3000"
+
+jwt:
+  secret-key: mysecretkeymysecretkeymysecretkey
+  access-token-expiration-ms: 1200000
+  refresh-token-expiration-ms: 604800000

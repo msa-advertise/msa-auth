@@ -3,3 +3,8 @@ spring:
     name: msa-auth
   profiles:
     active: local
+
+jwt:
+  secret-key: mysecretkeymysecretkeymysecretkey
+  access-token-expiration-ms: 1200000
+  refresh-token-expiration-ms: 604800000
