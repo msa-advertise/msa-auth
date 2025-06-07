@@ -1,19 +1,22 @@
+package ruby.msaauth.jwt
+
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
 import io.jsonwebtoken.security.Keys
-import java.util.Date
+import org.springframework.stereotype.Component
+import java.util.*
 
-object JwtUtil {
-    private const val SECRET_KEY = "mysecretkeymysecretkeymysecretkey"  // 실제로는 .env 등에서 관리하세요.
-    private const val EXPIRATION_TIME: Long = 3600000                   // 1시간 (밀리초)
+@Component
+class JwtUtil {
+    private val SECRET_KEY = "mysecretkeymysecretkeymysecretkey"  // 실제로는 .env 등에서 관리하세요.
+    private val EXPIRATION_TIME: Long = 3600000                   // 1시간 (밀리초)
 
     /**
      * JWT 생성
      */
-    fun generateToken(username: String): String {
-        val claims = mapOf("username" to username)
+    fun generateToken(email: String): String {
         return Jwts.builder()
-            .setClaims(claims)
+            .setSubject(email)
             .setIssuedAt(Date())
             .setExpiration(Date(System.currentTimeMillis() + EXPIRATION_TIME))
             .signWith(Keys.hmacShaKeyFor(SECRET_KEY.toByteArray()), SignatureAlgorithm.HS256)
@@ -44,6 +47,6 @@ object JwtUtil {
             .build()
             .parseClaimsJws(token)
             .body
-        return claims["username"].toString()
+        return claims["name"].toString()
     }
 }

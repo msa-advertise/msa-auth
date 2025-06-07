@@ -1,4 +1,4 @@
-package ruby.msaauth.enums
+package ruby.msaauth.data.enums
 
 enum class Status {
     REQUEST,        // 가입 요청
