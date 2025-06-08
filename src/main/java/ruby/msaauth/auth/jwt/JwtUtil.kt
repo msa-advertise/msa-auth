@@ -5,20 +5,25 @@ import io.jsonwebtoken.SignatureAlgorithm
 import io.jsonwebtoken.security.Keys
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.stereotype.Component
+import ruby.msaauth.data.entity.UserInfoRepository
+import ruby.msaauth.data.enums.Role
 import java.util.*
-import javax.security.auth.Subject
 
 @Component
-class JwtUtil(private val jwtProperties: JwtProperties) {
+class JwtUtil(
+    private val jwtProperties: JwtProperties,
+    private val userInfoRepository: UserInfoRepository
+) {
 
     /**
      * JWT 생성
      */
-    fun generateAccessToken(subject: String): String {
+    fun generateAccessToken(subject: String, roles: List<Role>): String {
         return jwtProperties.run {
             val now = Date()
             Jwts.builder()
                 .setSubject(subject)
+                .claim("roles", roles.map { it.name })
                 .setIssuedAt(now)
                 .setExpiration(Date(now.time + accessTokenExpirationMs))
                 .signWith(Keys.hmacShaKeyFor(secretKey.toByteArray()), SignatureAlgorithm.HS256)
@@ -64,12 +69,12 @@ class JwtUtil(private val jwtProperties: JwtProperties) {
      * JWT 로부터 사용자 이름 확인
      */
     fun extractSubject(token: String): String {
-        val claims = Jwts.parserBuilder()
+        return Jwts.parserBuilder()
             .setSigningKey(Keys.hmacShaKeyFor(jwtProperties.secretKey.toByteArray()))
             .build()
             .parseClaimsJws(token)
             .body
-        return claims.subject
+            .subject
     }
 }
 

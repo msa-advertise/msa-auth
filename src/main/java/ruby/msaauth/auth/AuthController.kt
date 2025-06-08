@@ -24,6 +24,8 @@ class AuthController(
     fun refreshToken(
         @CookieValue("refreshToken") refreshToken: String?, // 쿠키에서 리프레시 토큰 가져옴
     ): AccessTokenResponse {
+        if (refreshToken == null) throw RefreshTokenFailException()
+
         return authService.refreshToken(refreshToken)
     }
 }

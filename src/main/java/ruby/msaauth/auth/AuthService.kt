@@ -3,10 +3,12 @@
 import org.springframework.http.HttpStatus
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import ruby.msaauth.data.entity.UserInfoRepository
 import ruby.msaauth.jwt.JwtUtil
 
 @Service
+@Transactional(readOnly = true)
 class AuthService(
     private val userInfoRepository: UserInfoRepository,
     private val jwtUtil: JwtUtil,
@@ -18,22 +20,28 @@ class AuthService(
         val matches = passwordEncoder.matches(request.password, userInfo.password)
         if (!matches) throw LoginFailException()
 
-        return TokenResponse(
-            accessToken = jwtUtil.generateAccessToken(request.email),
-            refreshToken = jwtUtil.generateRefreshToken(request.email)
-        )
+        return userInfo.run {
+            TokenResponse(
+                accessToken = jwtUtil.generateAccessToken(email, roles.map { it.role }),
+                refreshToken = jwtUtil.generateRefreshToken(email)
+            )
+        }
     }
 
-    fun refreshToken(refreshToken: String?) : AccessTokenResponse {
+    fun refreshToken(refreshToken: String) : AccessTokenResponse {
         // Refresh Token 검증
         if (!jwtUtil.validateToken(refreshToken)) {
             throw RefreshTokenFailException()
         }
 
-        // Refresh Token 으로부터 Subject 를 획득하여 Access Token 재발급
-        return AccessTokenResponse(
-            jwtUtil.generateAccessToken(jwtUtil.extractSubject(refreshToken!!))
-        )
+        val email = jwtUtil.extractSubject(refreshToken)
+        return userInfoRepository.findByEmail(email)
+            ?.run {
+                AccessTokenResponse(
+                    jwtUtil.generateAccessToken(email, roles.map { it.role })
+                )
+            }
+            ?: throw LoginFailException()
     }
 }
 

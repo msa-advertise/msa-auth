@@ -9,7 +9,7 @@ import org.springframework.web.util.pattern.PathPatternParser
 @Configuration
 class ApiPrefixConfig : WebMvcConfigurer {
     override fun configurePathMatch(configurer: PathMatchConfigurer) {
-        // @RestController 에 붙은 모든 핸들러의 경로에 /api 를 prefix 로 추가한다.ㄲ
+        // @RestController 에 붙은 모든 핸들러의 경로에 /api 를 prefix 로 추가한다.
         configurer
             .addPathPrefix("/api") { handlerType ->
                 handlerType.isAnnotationPresent(RestController::class.java)
