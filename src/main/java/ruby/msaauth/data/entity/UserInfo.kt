@@ -3,6 +3,7 @@ package ruby.msaauth.data.entity
 import jakarta.persistence.*
 import org.springframework.data.jpa.repository.JpaRepository
 import ruby.msaauth.data.enums.Role
+import ruby.msaauth.data.enums.Status
 
 /**
  * 인증 서버에서는 사용자 인증을 할 정보만 있으면 된다.
@@ -23,6 +24,10 @@ class UserInfo(
 
     @Column(nullable = false, unique = true)
     val email: String,
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    var status: Status = Status.REQUEST,
 
     @OneToMany(mappedBy = "userInfo", cascade = [CascadeType.ALL], orphanRemoval = true)
     val roles: MutableList<UserRole> = mutableListOf()
