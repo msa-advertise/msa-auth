@@ -40,13 +40,25 @@ class UserRole(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0,
 
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    val role: Role,
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_info_id")
-    val userInfo: UserInfo
+    val userInfo: UserInfo,
+
+    @ManyToOne
+    @JoinColumn(name = "vendor_role_id")
+    val vendorRole: VendorRole
+)
+
+@Entity
+@Table(name = "VENDOR_ROLE")
+class VendorRole (
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    val id: Long = 0,
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    var role: Role
 )
 
 

@@ -22,7 +22,7 @@ class AuthService(
 
         return userInfo.run {
             TokenResponse(
-                accessToken = jwtUtil.generateAccessToken(email, roles.map { it.role }),
+                accessToken = jwtUtil.generateAccessToken(email, roles.map { it.vendorRole.role }),
                 refreshToken = jwtUtil.generateRefreshToken(email)
             )
         }
@@ -38,7 +38,7 @@ class AuthService(
         return userInfoRepository.findByEmail(email)
             ?.run {
                 AccessTokenResponse(
-                    jwtUtil.generateAccessToken(email, roles.map { it.role })
+                    jwtUtil.generateAccessToken(email, roles.map { it.vendorRole.role })
                 )
             }
             ?: throw LoginFailException()
