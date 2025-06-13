@@ -27,11 +27,15 @@ class UserInfo(
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    var status: Status = Status.REQUEST,
+    val status: Status = Status.REQUEST,
 
     @OneToMany(mappedBy = "userInfo", cascade = [CascadeType.ALL], orphanRemoval = true)
     val roles: MutableList<UserRole> = mutableListOf()
-)
+) {
+    fun isLockStatus() : Boolean {
+        return status !== Status.USED
+    }
+}
 
 @Entity
 @Table(name = "USER_ROLE")
@@ -58,12 +62,10 @@ class VendorRole (
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    var role: Role
+    val role: Role
 )
 
 
 interface UserInfoRepository : JpaRepository<UserInfo, Long> {
     fun findByEmail(email: String): UserInfo?
 }
-
-interface UserRoleRepository : JpaRepository<UserRole, Long>

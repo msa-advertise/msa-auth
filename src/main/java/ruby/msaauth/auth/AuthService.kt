@@ -20,6 +20,8 @@ class AuthService(
         val matches = passwordEncoder.matches(request.password, userInfo.password)
         if (!matches) throw LoginFailException()
 
+        if (userInfo.isLockStatus()) throw UserInfoLockException()
+
         return userInfo.run {
             TokenResponse(
                 accessToken = jwtUtil.generateAccessToken(email, roles.map { it.vendorRole.role }),
@@ -53,6 +55,11 @@ data class AccessTokenResponse(val accessToken: String)
 class LoginFailException(
     status: HttpStatus = HttpStatus.UNAUTHORIZED,
     message: String = "로그인에 실패하였습니다."
+) : AuthException(status, message)
+
+class UserInfoLockException(
+    status: HttpStatus = HttpStatus.UNAUTHORIZED,
+    message: String = "해당 계정은 로그인 할 수 없는 계정입니다. 관리자에게 문의해주세요."
 ) : AuthException(status, message)
 
 class RefreshTokenFailException(
